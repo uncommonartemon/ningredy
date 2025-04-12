@@ -29,7 +29,7 @@ import HeaderVue from './Main/HeaderComponents/HeaderVue.vue'
         mounted() {
             console.log(this.$page.props.styles);
             console.log(this.categories);
-            
+            console.log(`main page : `);
         }
     }
 </script>

@@ -8,18 +8,15 @@ use Illuminate\Support\Str;
 
 class Category extends Model
 {
-    protected $fillable = ['name', 'image', 'slug']; 
-
-    protected $casts = [
-        'name' => 'array', 
-    ];
+    protected $fillable = ['name_en','name_cz','name_ru', 'image', 'slug']; 
 
     public function products()
     {
-        return $this->hasMany(Product::class); 
+        return $this->belongsToMany(Product::class, 'category_products'); 
     }
     protected static function booted()
     {
+        //Dark icon
         static::deleting(function ($category) {
             if ($category->image) {
                 Storage::disk('public')->delete($category->image);
@@ -30,8 +27,16 @@ class Category extends Model
                 Storage::disk('public')->delete($category->getOriginal('image'));
             }
         });
-        // static::creating(function ($category) {
-        //     dd($category->getAttributes());  // Покажет все атрибуты, которые приходят в модель
-        // });
+        //Light icon
+        static::deleting(function ($category) {
+            if ($category->image_light) {
+                Storage::disk('public')->delete($category->image_light);
+            }
+        });
+        static::updating(function ($category) {
+            if ($category->isDirty('image_light') && $category->getOriginal('image_light')) {
+                Storage::disk('public')->delete($category->getOriginal('image_light'));
+            }
+        });
     }
 }

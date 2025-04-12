@@ -1,16 +1,19 @@
 <template>
     <div id="HeaderVue"
+    v-if="true"
+    ref="header"
     :style="{
-        backgroundColor: styles.dark_1,
+        position: this.$page.url == '/' ? 'sticky' : 'sticky',
+        backgroundColor: this.$page.url == '/' ? styles.dark_1 : styles.dark_1,
         borderBottom: '1px solid' + styles.dark_4,
     }"
     :class="isMounted && false ?  {'header-slam': windowTop > 10, 'header-unslam': windowTop <= 10} : ''"
     >
-        <div class="header-block"  :style="{maxWidth : '1400px'}">
+        <div class="header-block" ref="headerBlock" :style="{maxWidth : '1400px'}">
             <div class="header-left header-item">
                 <Link
                 :style="{color: styles.contrast_1}"
-                class="header-logo" :href="'/'">Ningredy </Link>
+                class="header-logo" :href="'/'"><span ref="letter" v-for="letter in logo">{{ letter }}</span> </Link>
                 
             </div>
             <div class="header-search header-item">
@@ -59,7 +62,6 @@
 import { nextTick } from "vue";
 import { Link, router } from '@inertiajs/vue3';
 import { gsap } from "gsap";
-import HeaderCart from './HeaderCart.vue';
 import HeaderCartAlt from './HeaderCartAlt.vue';
 import HeaderSearch from './HeaderSearch.vue';
 
@@ -71,7 +73,8 @@ import HeaderSearch from './HeaderSearch.vue';
                 windowTop: null,
                 isMounted: false,
                 search: null,
-                searchColor: false
+                searchColor: false,
+                logo: 'Valkon'
             }
         },
         props: {
@@ -80,7 +83,6 @@ import HeaderSearch from './HeaderSearch.vue';
         },
         components: {
             Link,
-            HeaderCart,
             HeaderSearch,
             HeaderCartAlt,
         },
@@ -97,6 +99,39 @@ import HeaderSearch from './HeaderSearch.vue';
             // }
         },
         methods: {
+            initHeader() {
+                let head = this.$refs.header
+                let letter = this.$refs.letter
+                let letters = Array.from(this.$refs.letter)
+                let tl = gsap.timeline()
+                tl.set(head, {
+                    top: -200
+                })
+                tl.to(head,{
+                    top: 0,
+                    duration: 0.5
+                })
+                tl.fromTo(letters, 
+                    { 
+                        opacity: 0,
+                        y: 50,
+                        scale: 0.5 
+                    },
+                    { 
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        duration: 0.4,
+                        stagger: 0.03,
+                        ease: "power3.out"
+                    }
+                )
+                // tl.fromTo(this.$refs.searchInput,{
+                //     width: 0
+                // }, {
+                //     width: 400
+                // })
+            },
             openCart() {
                 if (this.cart) {
                     if (this.$refs.cart && typeof this.$refs.cart.animateClose === 'function') {
@@ -161,6 +196,11 @@ import HeaderSearch from './HeaderSearch.vue';
             this.isMounted = true;
             window.addEventListener("scroll", this.onScroll);
             window.addEventListener('click', this.handleClickOutside);
+            //Init
+            // if(this.$page.url == '/') {
+            //     this.initHeader
+            // }
+            this.initHeader()
         }, 
         beforeDestroy() {
             window.removeEventListener("scroll", this.onScroll);

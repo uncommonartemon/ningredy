@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Settings extends Model
 {
-    protected $fillable = ['styles'];
+    protected $fillable = ['styles', 'settings'];
     protected $casts = [
-        'styles' => 'array'
+        'styles' => 'array',
+        'settings' => 'array',
     ];
 }

@@ -2,6 +2,7 @@
     <div ref='searchVue'
     :style="{
         backgroundColor: styles.dark_2,
+        color: styles.white,
     }"
      id="HeaderSearch">
         <div  v-if="searchItemOpen" class="header-search-items">
@@ -80,7 +81,7 @@ import HeaderSearchItem from './HeaderSearchItem.vue'
                         maxWidth: '1405px',
                         left: window.innerWidth > 1400 ? (window.innerWidth - 1400 - 5) / 2  : 0,
                         opacity: 0.98,
-                        maxHeight: 350,
+                        maxHeight: 500,
                         top: this.$parent.$el.getBoundingClientRect().height,
                         ease: 'power2.inOut',
                         padding: '30px 50px',

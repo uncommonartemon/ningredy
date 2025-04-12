@@ -34,26 +34,26 @@ class CategoryResource extends Resource
                 ->collapsible()
                 ->columns(3)
                 ->schema([
-                    Forms\Components\TextInput::make('name.en')  // Для английского
-                        ->label('Название (English)')
+                    Forms\Components\TextInput::make('name_en')  // Для английского
+                        ->label('Name (English)')
                         ->required(),
-                    Forms\Components\TextInput::make('name.ru')  // Для русского
-                        ->label('Название (Russian)')
+                    Forms\Components\TextInput::make('name_cz')  // Для русского
+                        ->label('Name (Czech)')
                         ->required(),
-                    Forms\Components\TextInput::make('name.cz')  // Для чешского
-                        ->label('Название (Czech)')
+                    Forms\Components\TextInput::make('name_ru')  // Для чешского
+                        ->label('Name (Russian)')
                         ->required(),
                 ]),
-            Forms\Components\Section::make('Category Image')
-                ->collapsible()
-                ->schema([
                     Forms\Components\FileUpload::make('image') // Поле для загрузки изображения
-                        ->label('Category Image')
+                        ->label('Category Icon for Dark theme (64px optimal)')
                         ->disk('public')
                         ->image() // Ожидаем изображение
-                        ->directory('categories')
-            
-                ]),
+                        ->directory('categories'),
+                    Forms\Components\FileUpload::make('image_light') // Поле для загрузки изображения
+                        ->label('Category Icon for Light theme (64px optimal)')
+                        ->disk('public')
+                        ->image() // Ожидаем изображение
+                        ->directory('categories'),
                 Forms\Components\Checkbox::make('is_active')
                 ->label('Показать категорию?')
                 ->default(true)
@@ -64,13 +64,13 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name.en') // Отображаем поле name на английском
+                Tables\Columns\TextColumn::make('name_en') // Отображаем поле name на английском
                     ->label('Name (English)')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('name.ru') // Отображаем поле name на русском
+                Tables\Columns\TextColumn::make('name_ru') // Отображаем поле name на русском
                     ->label('Name (Russian)')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('name.cz') // Отображаем поле name на чешском
+                Tables\Columns\TextColumn::make('name_cz') // Отображаем поле name на чешском
                     ->label('Name (Czech)')
                     ->sortable(),
                 Tables\Columns\ImageColumn::make('image') // Столбец для изображения

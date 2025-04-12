@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->json('styles')->nullable();
+            $table->json('settings')->nullable();
         });
     }
 

@@ -14,8 +14,8 @@
                 <div class="product-title">{{ product.title.en }}</div>
                 <!-- <div class="product-brand">{{ product.category.name.en }}</div> -->
                 <div class="product-price">
-                    <span :style="{backgroundColor : styles.contrast_1, color : styles.black}" v-if="product.discount > 0" class="discount">{{ product.discount }}Kč</span>
-                    <span :style="{textDecoration: product.discount ? 'line-through' : none}" class="price">{{ product.price }}Kč</span>
+                    <span :style="{backgroundColor : styles.contrast_1, color : styles.black}" v-if="product.discount > 0" class="discount">{{ product.discount }}{{ settings.currency }}</span>
+                    <span :style="{textDecoration: product.discount ? 'line-through' : none}" class="price">{{ product.price }}{{ settings.currecny }}</span>
                 </div>
             </div>
         </div>
@@ -25,7 +25,11 @@
             :style="{backgroundColor: styles.dark_2}"
             class="product-attributes">
                 <div class="attribute product-category tag-block">
-                    <span  :style="{}" class="tag"><span ref="letter" v-for="letter in textCategory">{{ letter }}</span></span>
+                    <div v-for="category in catgories" class="tag">
+                        <span ref="letter" v-for="letter in category">
+                            {{ letter }}
+                        </span>
+                    </div>
                 </div>
                 <div class="attribute product-brand tag-block">
                     <span  :style="{}" class="tag"><span ref="letter" v-for="letter in textBrand">{{ letter }}</span></span>
@@ -53,8 +57,9 @@ import gsap from 'gsap';
                 showAdded: false,
                 showAddedDelay: 200,
                 styles: this.$page.props.styles,
+                settings: this.$page.props.settings,
                 side: 90,
-                textCategory: `Category: ${this.product.category.name.en}`,
+                Categories: this.product.categories,
                 textBrand: `Brand: ${this.product.brand}` ,
                 stagger: 0,
             }

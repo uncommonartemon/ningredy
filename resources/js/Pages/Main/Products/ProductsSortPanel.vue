@@ -17,7 +17,7 @@
                         </div>
                     </Link>
                     <p class="category-name">
-                        <span v-for="span in category.name.en">{{ span }}</span>
+                        <span v-for="span in category.name_en">{{ span }}</span>
                     </p>
                 </div>
                 <div class="sort-panel-right">

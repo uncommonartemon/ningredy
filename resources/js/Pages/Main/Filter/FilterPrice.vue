@@ -2,13 +2,13 @@
     <div
     :style="{borderBottom: '2px solid ' + styles.dark_4}"
     id="FilterPrice">
-        <p @click="show = !show" class="filterPriceShow">
+        <div @click="show = !show" class="filterPriceShow">
             Price
             <div class="mark">
                 <div :class="{'branch-anim1' : show, 'branch-reverse1' : !show}" class="mark-branch"></div>
                 <div :class="{'branch-anim2' : show, 'branch-reverse2' : !show}" class="mark-branch"></div>
             </div>
-        </p>
+        </div>
         <transition name="show-key">
             <div v-if="show" class="filterPriceContent">
             

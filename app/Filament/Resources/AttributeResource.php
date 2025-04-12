@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\AttributeResource\Pages;
 use App\Filament\Resources\AttributeResource\RelationManagers;
 use App\Models\Attribute;
+use App\Models\AttributeGroup;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -95,13 +96,20 @@ class AttributeResource extends Resource
 
             Forms\Components\TagsInput::make('values')
             ->label('Значения')
-            ->placeholder('Введите значение')
+            ->placeholder('Введите значение'),
+
+            Select::make('attribute_group_id')
+                // ->options(AttributeGroup::all()->pluck('title','id')->toArray())
+                ->relationship('attributeGroup', 'title')
+                ->preload()
+                ->searchable(),
         ]);
 }
 
 public static function table(Table $table): Table
 {
     return $table
+        ->defaultPaginationPageOption(50)
         ->columns([
             // Колонка ID
             Tables\Columns\TextColumn::make('id')
@@ -113,7 +121,7 @@ public static function table(Table $table): Table
             Tables\Columns\TextColumn::make('key')
             ->label('en')
             ->formatStateUsing(fn($state) => $state ?? '-') // Если ключ отсутствует, показываем '-'
-            ->searchable(),
+            ->searchable(isIndividual: true),
 
             // Колонка для ключей RU
             Tables\Columns\TextColumn::make('translate.cz')
@@ -126,7 +134,10 @@ public static function table(Table $table): Table
             ->label('ru')
             ->formatStateUsing(fn($state) => $state ?? '-')
             ->searchable(),
-
+            // Колонка Груп
+            Tables\Columns\TextColumn::make('attributeGroup.title')
+                ->searchable(isIndividual: true)
+                ->sortable(),
             // Колонка Values
             Tables\Columns\TextColumn::make('values')
                 ->label('Values')
@@ -138,7 +149,6 @@ public static function table(Table $table): Table
                 })
                 ->extraAttributes(['style' => 'width: 50%;']) // Задаём большую ширину для этой колонки
                 ->sortable()
-                ->searchable(),
         ])
         ->filters([
             // Добавить фильтры, если необходимо

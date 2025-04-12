@@ -59,6 +59,7 @@ class HandleInertiaRequests extends Middleware
             //     'maxWidth' => '1400px'
             // ],
             'styles' => Settings::first()->styles ?? [],
+            'settings' => Settings::first()->settings ?? [],
         ]);
     }
 }

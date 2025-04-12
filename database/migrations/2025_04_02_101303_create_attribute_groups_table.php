@@ -9,15 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('attributes', function (Blueprint $table) {
+        Schema::create('attribute_groups', function (Blueprint $table) {
             $table->id();
-            $table->string('key')->unique();
-            $table->json('translate');
-            $table->string('slug')->nullable();
-            $table->json('values');
             $table->timestamps();
+            $table->string('title');
+            $table->json('translate')->nullable();
+            $table->string('icon')->nullable();
+            $table->string('icon_light')->nullable();
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attributes');
+        Schema::dropIfExists('attribute_groups');
     }
 };

@@ -7,13 +7,38 @@ use Inertia\Inertia;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Attribute;
+use App\Models\Slider;
+use App\Models\Settings;
 
 class MainController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $categories = Category::all();
-        return Inertia::render('Main/HomePage', ['categories' => $categories]);   
+        $attributes = Attribute::all();
+        $slider = Slider::all();
+
+        $release_count = $request->input('release', 10);
+        $release_products = Product::orderBy('created_at', 'desc')->take($release_count)->get();
+
+        $showCase = collect();
+        $settings = Settings::first();
+        $settingsData = $settings->styles['showcase'] ?? [];
+        if (count($settingsData) == 0) {
+            $showCase = Product::inRandomOrder()->take(10)->get();
+        } else { $showCase = Product::whereIn('id', $settingsData)->get(); }
+
+        $discount_count = $request->input('discount', 10);
+        $discount_products = Product::orderByRaw('(COALESCE(discount, 0) / price) DESC')->take($discount_count)->get();
+
+        return Inertia::render('Main/HomePage', [
+            'categories' => $categories, 
+            'slider' => $slider,
+            'release' => $release_products,
+            'showCase' => $showCase,
+            'discounts' => $discount_products,
+            'attributes' => $attributes
+        ]);   
     }
 
     public function productsByCategory(Category $category, Request $request) {
@@ -110,7 +135,7 @@ class MainController extends Controller
         $prices = $productData->map(function ($product) {
             return $product->discount ? $product->discount : $product->price;
         })->unique();
-    
+        //dd($category);
         return Inertia::render('Main/ProductsByCategory', [
             'category' => $category,
             'products' => $productsPaginate,
@@ -146,7 +171,7 @@ class MainController extends Controller
         }
     
         // Загружаем продукты с их категориями
-        $products = $products->with('category')->limit(20)->get();
+        $products = $products->with('categories')->limit(20)->get();
     
         // Сохраняем сгруппированные продукты в сессии
         session(['searchProducts' => $products]);
@@ -154,10 +179,25 @@ class MainController extends Controller
     }
 
     public function productById(Request $request) {
-        $product = Product::find($request->id);
+        $product = Product::with('categories')->find($request->id);
+        if (!$product) {
+            //dd( Settings::first()->settings['loading_dark']);
+            $product = [
+              'title' => [
+                'en' => 'title'
+              ],
+              'price' => 'price',
+              'discount' => 'discount',
+              'categories'=> [['name_en'=> 'category']],
+              'type'=> 'type',
+              'brand'=> 'brand',
+              'images' => null
+            ];
+        }
         //dd($product);
         return Inertia::render('Main/ProductById',[
-            'product' => $product
+            'product' => $product,
+            
         ]);
     }
 

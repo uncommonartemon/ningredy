@@ -6,6 +6,7 @@ use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
 use App\Models\Attribute;
+use App\Models\category_product;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -42,7 +43,7 @@ class ProductResource extends Resource
                 ->schema([
                     Forms\Components\TextInput::make('brand'),
                     Forms\Components\TextInput::make('type'),
-                    Forms\Components\TextInput::make('country')
+                    //Forms\Components\TextInput::make('country')
                 ]),
                 Forms\Components\Section::make()->compact()
                 ->columns(2)
@@ -56,11 +57,12 @@ class ProductResource extends Resource
                 ]),
                 Forms\Components\Section::make()->columnSpan(1)->compact()
                 ->schema([
-                    Forms\Components\Select::make('category_id')
-                        ->label('Category') 
-                        ->options(Category::all()->pluck('name.en', 'id')->toArray())
-                        ->searchable() 
-                        ->required(), 
+                    Forms\Components\Select::make('categories')
+                        ->label('Category')
+                        ->multiple()
+                        ->relationship('categories', 'name_en')
+                        ->searchable()
+                        ->preload()
                 ]),
                 Forms\Components\Section::make()->compact()
                 ->columns(3)
@@ -74,7 +76,6 @@ class ProductResource extends Resource
                 ->columns(1)
                 ->schema([
                     Forms\Components\Select::make('attributes')
-                    ->required()
                     ->reactive()
                     ->multiple()
                     ->options(
@@ -101,18 +102,10 @@ class ProductResource extends Resource
                     ->directory('products')
                 ]),
                 Forms\Components\Section::make()->schema([
-                    Forms\Components\TagsInput::make('tags')
-                    ->label('Tags')
-                    
-                ])->columnSpan(1)->compact(),
-                Forms\Components\Section::make()->schema([
                     Forms\Components\Toggle::make('used')->default(false)->label('used?'),
                     Forms\Components\Toggle::make('active')->default(true)->label('active?'),
                 ])->columns(2)->columnSpan(1)->compact(),
 
-                Forms\Components\Section::make('Additional')->schema([
-                    
-                ])->columns(2)->compact(),
             ]);
     }
 
@@ -141,7 +134,7 @@ class ProductResource extends Resource
                     ->searchable(),
                 
                 // Отображение категории (если у продукта есть связь с категорией)
-                Tables\Columns\TextColumn::make('category.name.en')
+                Tables\Columns\TextColumn::make('category.name_en')
                 ->label('Category')
                 ->sortable()
                 ->searchable(query: function (Builder $query, string $search) {
@@ -149,7 +142,7 @@ class ProductResource extends Resource
                     return $query->orWhereHas('category', function (Builder $query) use ($search) {
                         // Если в базе название хранится как JSON, например, {"en": "Название", "cz": "Jméno", ...}
                         // можно использовать синтаксис доступа к JSON: name->en (MySQL 5.7+ поддерживает JSON_EXTRACT)
-                        $query->where('name->en', 'like', "%{$search}%");
+                        $query->where('name_en', 'like', "%{$search}%");
                     });
                 }),
                     

@@ -9,7 +9,7 @@ class Product extends Model
 {
     protected $fillable = [
         'title', 'description', 'price', 'discount', 'images', 
-        'attributes', 'category_id', 'brand', 'country', 'used', 'active',
+        'attributes', 'brand', 'country', 'used', 'active',
         'slug', 'type', 'discount_lifespan', 'views', 'views_uniq', 
     ];
 
@@ -22,9 +22,9 @@ class Product extends Model
         'info' => 'array',
     ];
 
-    public function category()
+    public function categories()
     {
-        return $this->belongsTo(Category::class); // Связь с категорией
+        return $this->belongsToMany(Category::class, 'category_products');
     }
 
     public function attributes()

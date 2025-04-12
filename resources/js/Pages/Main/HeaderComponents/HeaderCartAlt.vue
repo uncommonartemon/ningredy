@@ -6,10 +6,10 @@
         class="header-cart">
             Cart: 
             <b ref="qty" :style="{color : styles.contrast_1}">{{ qty }}</b> items totaling - <b :style="{color : styles.contrast_1}">
-                <span ref="priceLetters" v-for="(letter,index) in priceCart.toFixed(0).toString()" :key="index">{{ letter }}</span>Kč
+                <span ref="priceLetters" v-for="(letter,index) in priceCart.toFixed(0).toString()" :key="index">{{ letter }}</span>{{ settings.currency }}
             
             </b>
-            <s v-if="priceCart < discountCart" :style="{color : priceCart < discountCart ? 'grey' : none}">{{ discountCart }} Kč</s>
+            <s v-if="priceCart < discountCart" :style="{color : priceCart < discountCart ? 'grey' : none}">{{ discountCart }} {{ settings.currency }}</s>
         </div>
         <div
         v-show="qty > 0"
@@ -54,6 +54,7 @@ gsap.registerPlugin(TextPlugin)
             return {
                 hoverButton: false,
                 styles: this.$page.props.styles,
+                settings: this.$page.props.settings,
                 products: this.$page.props.cart,
                 calm: true,
             }
